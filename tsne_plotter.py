@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 def plot_tsne(clusters, tsne_results):
     """Plot the clusters found by reducing dimensions with calc_tsne."""
     
-    fig = plt.figure(figsize=(8, 6))
+    fig = plt.figure(figsize=(10, 8))
     ax = fig.add_subplot(111)
 
     for cluster in np.unique(clusters):
@@ -37,7 +37,7 @@ def plot_tsne_with_labels(tsne_results, df, dflabel, categs, colors):
             return dflabel.iloc[idx, 1]
 
     subset, not_subset = tsne_results[labelmask], tsne_results[~labelmask]
-    fig = plt.figure(figsize=(8, 6))
+    fig = plt.figure(figsize=(10, 8))
     # not labelled points
     plt.scatter(not_subset[:, 0], not_subset[:, 1], s=20, c="gray", alpha=0.3)
 
@@ -65,7 +65,7 @@ def plot_tsne_with_labels(tsne_results, df, dflabel, categs, colors):
     plt.show()
 
 def plot_tsne_with_labeled_clusters(tsne_results, cl, clusters, categs, colors):
-    fig = plt.figure(figsize=(8,6))
+    fig = plt.figure(figsize=(10,8))
     ax = fig.add_subplot(111)
 
     for c in np.unique(cl.labels_):
