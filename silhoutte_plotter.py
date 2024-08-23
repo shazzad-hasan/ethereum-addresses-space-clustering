@@ -4,14 +4,22 @@ from sklearn.cluster import KMeans
 import matplotlib.pyplot as plt
 import matplotlib.cm as cm
 
-def sil_scores(X, range_n_clusters ):
+def sil_scores(X, max_n_clusters, init, n_init, max_iter, tol, algorithm):
     """
     Compute the average silhouette scores for a range of cluster numbers.
     """
     result = []
+    range_n_clusters = range(1, max_n_clusters + 1)
     for n_clusters in range_n_clusters:
-        clusterer = KMeans(n_clusters=n_clusters, n_init=20, max_iter=500, random_state=42)
-        cluster_labels = clusterer.fit_predict(X)
+        kmeans = KMeans(n_clusters=n_clusters, 
+                        init=init, 
+                        n_init=n_init, 
+                        max_iter=max_iter, 
+                        tol=tol, 
+                        algorithm=algorithm, 
+                        random_state=42)
+
+        cluster_labels = kmeans.fit_predict(X)
 
         silhouette_avg = silhouette_score(X, cluster_labels)
         print(f"For n_clusters = {n_clusters}, the average silhouette_score is: {silhouette_avg:.3f}")
@@ -20,23 +28,30 @@ def sil_scores(X, range_n_clusters ):
     
     return result
 
-def plot_silhouette_scores(data, min_clusters, max_clusters):
+def plot_silhouette_scores(X, max_n_clusters, init, n_init, max_iter, tol, algorithm):
     """
     Calculate silhouette scores for each k number of clusters and plot it with markers.
     """
     silhouette_scores = []
-    range_of_clusters = range(min_clusters, max_clusters)
+    range_n_clusters = range(2, max_n_clusters + 1, 2)
 
-    for k in range_of_clusters:
-        clusterer = KMeans(n_clusters=k, n_init=20, max_iter=500, random_state=42)
-        preds = clusterer.fit_predict(data)
-        score = silhouette_score(data, preds)
+    for n_clusters in range_n_clusters:
+        kmeans = KMeans(n_clusters=n_clusters, 
+                        init=init, 
+                        n_init=n_init, 
+                        max_iter=max_iter, 
+                        tol=tol, 
+                        algorithm=algorithm, 
+                        random_state=42)
+
+        preds = kmeans.fit_predict(X)
+        score = silhouette_score(X, preds)
         silhouette_scores.append(score)
 
-    plt.plot(range_of_clusters, silhouette_scores, marker='o', color='b', linestyle='-.')
+    plt.plot(range_n_clusters, silhouette_scores, marker='o', color='b', linestyle='-.')
 
     max_score_idx = silhouette_scores.index(max(silhouette_scores))
-    optimal_k = range_of_clusters[max_score_idx]
+    optimal_k = range_n_clusters[max_score_idx]
 
     plt.axvline(x=optimal_k, color='g', linestyle=':', label=f'Optimal k = {optimal_k}')
 
@@ -46,11 +61,12 @@ def plot_silhouette_scores(data, min_clusters, max_clusters):
     plt.legend()
     plt.show()
 
-def silhouette_plotter(X, range_n_clusters, tsne_X):
+def silhouette_plotter(X, max_n_clusters, init, n_init, max_iter, tol, algorithm, tsne_X):
     """
     Plot silhouette analysis for different numbers of clusters using KMeans clustering.
     """
     all_scores = []
+    range_n_clusters = range(2, max_n_clusters + 1, 2)
     
     for n_clusters in range_n_clusters:
         fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(16, 6))
@@ -58,8 +74,15 @@ def silhouette_plotter(X, range_n_clusters, tsne_X):
         ax1.set_xlim([-0.1, 1])
         ax1.set_ylim([0, len(X) + (n_clusters + 1) * 10])
 
-        clusterer = KMeans(n_clusters=n_clusters, n_init=20, max_iter=500, random_state=42)
-        cluster_labels = clusterer.fit_predict(X)
+        kmeans = KMeans(n_clusters=n_clusters, 
+                        init=init, 
+                        n_init=n_init, 
+                        max_iter=max_iter, 
+                        tol=tol, 
+                        algorithm=algorithm, 
+                        random_state=42)
+
+        cluster_labels = kmeans.fit_predict(X)
 
         silhouette_avg = silhouette_score(X, cluster_labels)
         all_scores.append(silhouette_avg)
@@ -104,22 +127,32 @@ def silhouette_plotter(X, range_n_clusters, tsne_X):
     
     return all_scores
 
-def plot_elbow_method(X, max_n_clusters):
+def plot_elbow_method(X, optimal_k, max_n_clusters, init, n_init, max_iter, tol, algorithm):
     """
     Plot the elbow method for determining the optimal number of clusters.
     """
     wcss = []
-
-    for n_clusters in range(1, max_n_clusters + 1):
-        kmeans = KMeans(n_clusters=n_clusters, n_init=20, max_iter=500, random_state=42)
+    range_n_clusters = range(1, max_n_clusters + 1)
+    for n_clusters in range_n_clusters:
+        kmeans = KMeans(n_clusters=n_clusters, 
+                        init=init, 
+                        n_init=n_init, 
+                        max_iter=max_iter, 
+                        tol=tol, 
+                        algorithm=algorithm, 
+                        random_state=42)
         kmeans.fit(X)
         wcss.append(kmeans.inertia_)
     
     plt.figure(figsize=(8, 4))
-    plt.plot(range(1, max_n_clusters + 1), wcss, marker='o')
+    plt.plot(range(1, max_n_clusters + 1), wcss, marker='o', color='b', linestyle='-.')
     plt.title('Elbow Method for Optimal Number of Clusters')
     plt.xlabel('Number of Clusters')
     plt.ylabel('Within-Cluster Sum of Squares (WCSS)')
+
+    plt.axvline(x=optimal_k, color='g', linestyle=':', label=f'Optimal k = {optimal_k}')
+
     plt.xticks(range(1, max_n_clusters + 1))
-    plt.grid(True)
+    # plt.grid(True)
+    plt.legend()
     plt.show()
