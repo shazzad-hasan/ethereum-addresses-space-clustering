@@ -48,7 +48,8 @@ def plot_silhouette_scores(X, max_n_clusters, init, n_init, max_iter, tol, algor
         score = silhouette_score(X, preds)
         silhouette_scores.append(score)
 
-    plt.plot(range_n_clusters, silhouette_scores, marker='o', color='b', linestyle='-.')
+    plt.figure(figsize=(8, 4))
+    plt.plot(range_n_clusters, silhouette_scores, marker='s', color='k', linestyle='-.')
 
     max_score_idx = silhouette_scores.index(max(silhouette_scores))
     optimal_k = range_n_clusters[max_score_idx]
@@ -59,6 +60,8 @@ def plot_silhouette_scores(X, max_n_clusters, init, n_init, max_iter, tol, algor
     plt.xlabel("Number of clusters, k")
     plt.ylabel("Silhouette score")
     plt.legend()
+    plt.xticks(range_n_clusters)
+    # plt.grid(True)
     plt.show()
 
 def silhouette_plotter(X, max_n_clusters, init, n_init, max_iter, tol, algorithm, tsne_X):
@@ -145,7 +148,7 @@ def plot_elbow_method(X, optimal_k, max_n_clusters, init, n_init, max_iter, tol,
         wcss.append(kmeans.inertia_)
     
     plt.figure(figsize=(8, 4))
-    plt.plot(range(1, max_n_clusters + 1), wcss, marker='o', color='b', linestyle='-.')
+    plt.plot(range_n_clusters, wcss, marker='s', color='k', linestyle='-.')
     plt.title('Elbow Method for Optimal Number of Clusters')
     plt.xlabel('Number of Clusters')
     plt.ylabel('Within-Cluster Sum of Squares (WCSS)')

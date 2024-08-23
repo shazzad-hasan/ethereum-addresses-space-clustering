@@ -72,7 +72,7 @@ def plot_tsne_with_labeled_clusters(tsne_results, cl, clusters, categs, colors):
     for lh in legend.legendHandles:
         lh.set_alpha(1)
 
-    plt.title('T-SNE')
+    plt.title('Labeled Clusters')
     plt.xlabel('First Principal Component')
     plt.ylabel('Second Principal Component')
     plt.show()
